@@ -24,7 +24,7 @@ function nearest_node(nodes::Dict{Int,T}, loc::T) where T<:(Union{OpenStreetMapX
     min_dist = Inf
     best_ind = 0
 
-    for (key, node) in nodes
+    Threads.@threads for (key, node) in nodes
         dist = OpenStreetMapX.distance(node, loc)
         if dist < min_dist
             min_dist = dist
@@ -49,7 +49,7 @@ function nearest_node(nodes::Dict{Int,T}, loc::T, node_list::AbstractSet{Int}) w
     min_dist = Inf
     best_ind = 0
 
-    for ind in node_list
+    Threads.@threads for ind in node_list
         dist = OpenStreetMapX.distance(nodes[ind], loc)
         if dist < min_dist
             min_dist = dist
@@ -74,7 +74,7 @@ function nodes_within_range(nodes::Dict{Int,T}, loc::T, range::Float64 = Inf) wh
         return keys(nodes)
     end
     indices = Int[]
-    for (key, node) in nodes
+    Threads.@threads for (key, node) in nodes
         dist = OpenStreetMapX.distance(node, loc)
         if dist < range
             push!(indices, key)
@@ -91,7 +91,7 @@ function nodes_within_range(nodes::Dict{Int,T}, loc::T, node_list::AbstractSet{I
         return node_list
     end
     indices = Int[]
-    for ind in node_list
+    Threads.@threads for ind in node_list
         dist = OpenStreetMapX.distance(nodes[ind], loc)
         if dist < range
             push!(indices, ind)
